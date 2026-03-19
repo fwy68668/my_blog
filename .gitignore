@@ -1,0 +1,51 @@
+# ===================== 后端（Java/SpringBoot）忽略规则 =====================
+# 编译生成的class文件
+*.class
+# Maven/Gradle 构建目录
+target/
+build/
+# IDE 配置文件（IDEA/Eclipse）
+.idea/
+*.iml
+*.ipr
+*.iws
+.settings/
+.project
+.classpath
+# 日志文件
+logs/
+*.log
+# 临时文件
+tmp/
+temp/
+# 环境配置文件（包含密码/密钥等敏感信息）
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml
+# 依赖缓存
+.mvn/
+mvnw.cmd.bak
+
+# ===================== 前端（Vue/React/Next.js）忽略规则 =====================
+# 依赖包（node_modules 体积大，无需上传）
+node_modules/
+# 构建产物
+dist/
+out/
+.next/
+# 环境变量文件（包含密钥等敏感信息）
+.env
+.env.local
+.env.development.local
+.env.production.local
+# npm/yarn 缓存
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# IDE 配置
+.vscode/
+.DS_Store
+# 缓存文件
+*.swp
+*.swo
+# 前端打包临时文件
+*.tmp
