@@ -1,13 +1,21 @@
 package com.example.blog.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.blog.common.Result;
+import com.example.blog.entity.Comment;
 import com.example.blog.entity.User;
+import com.example.blog.entity.UserLikeRecord;
+import com.example.blog.mapper.CommentMapper;
+import com.example.blog.mapper.UserLikeRecordMapper;
 import com.example.blog.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -16,6 +24,12 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private UserLikeRecordMapper userLikeRecordMapper;
 
     @PostMapping("/register")
     @Operation(summary = "用户注册")
@@ -72,5 +86,27 @@ public class UserController {
             user.setPassword(null); // 绝对不能把密码传给前端
         }
         return Result.success(user);
+    }
+
+    // ================= 管理员专属接口 =================
+
+    @GetMapping("/list")
+    @Operation(summary = "获取所有用户列表 (仅限管理员)")
+    public Result<List<User>> getAllUsers() {
+        // 获取所有用户
+        List<User> users = userService.list();
+        // 🚨 极度危险：千万不能把密码的 MD5 密文也发给前端，必须手动抹除！
+        for (User user : users) {
+            user.setPassword(null);
+        }
+        return Result.success(users);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "注销/删除指定用户 (级联清理评论)")
+    public Result<String> deleteUser(@PathVariable Long id) {
+
+        userService.deleteUserWithCascades(id);
+        return Result.success("该幻想家及其留下的痕迹已被彻底清除！");
     }
 }

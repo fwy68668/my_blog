@@ -14,10 +14,16 @@
           <span>✍️ 发布文章</span>
         </el-menu-item>
         <el-menu-item index="/admin/articles">
-          <span>📚 文章管理</span>
+          <el-icon><Document /></el-icon>
+          <span>文章管理</span>
         </el-menu-item>
         <el-menu-item index="/admin/categories">
-          <span>🏷️ 分类管理</span>
+          <el-icon><Collection /></el-icon>
+          <span>分类管理</span>
+        </el-menu-item>
+        <el-menu-item index="/admin/users">
+          <el-icon><User /></el-icon>
+          <span>用户管理</span>
         </el-menu-item>
       </el-menu>
     </el-aside>

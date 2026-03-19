@@ -26,14 +26,21 @@ public class ArticleController {
         return isSuccess ? Result.success(true) : Result.error("新增失败");
     }
 
+//    @DeleteMapping("/{id}")
+//    @AdminOnly //管理员
+//    @Operation(summary = "刪除文章", description = "根據文章 ID 刪除指定的文章")
+//    public Result<Boolean> delete(@PathVariable Long id) {
+//        boolean isSuccess = articleService.removeById(id);
+//        return isSuccess ? Result.success(true) : Result.error("刪除失败");
+//    }
     @DeleteMapping("/{id}")
-    @AdminOnly //管理员
-    @Operation(summary = "刪除文章", description = "根據文章 ID 刪除指定的文章")
-    public Result<Boolean> delete(@PathVariable Long id) {
-        boolean isSuccess = articleService.removeById(id);
-        return isSuccess ? Result.success(true) : Result.error("刪除失败");
+    @AdminOnly
+    @Operation(summary = "删除文章 (级联删除评论和点赞)")
+    public Result<String> deleteArticle(@PathVariable Long id) {
+        // 替换掉原来的 articleService.removeById(id)
+        articleService.deleteArticleWithCascades(id);
+        return Result.success("文章及相关数据已彻底销毁！");
     }
-
     @PutMapping
     @AdminOnly //管理员
     @Operation(summary = "修改文章", description = "傳入包含 ID 的文章物件进行修改")
@@ -83,6 +90,8 @@ public class ArticleController {
         List<Article> list = articleService.getLikedArticlesByUserId(userId);
         return Result.success(list);
     }
+
+
 
 
 

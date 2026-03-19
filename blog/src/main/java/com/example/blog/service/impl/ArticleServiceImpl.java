@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.blog.entity.Article;
 import com.example.blog.entity.Category;
+import com.example.blog.entity.Comment;
 import com.example.blog.entity.UserLikeRecord;
 import com.example.blog.mapper.ArticleMapper;
 import com.example.blog.mapper.CategoryMapper;
+import com.example.blog.mapper.CommentMapper;
 import com.example.blog.mapper.UserLikeRecordMapper;
 import com.example.blog.service.IArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements IArticleService {
 
+    @Autowired
+    private CommentMapper commentMapper;
     @Autowired
     private CategoryMapper categoryMapper;
     @Autowired
@@ -108,5 +112,21 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             }
         }
         return articles;
+    }
+
+    @Transactional(rollbackFor = Exception.class) // 🌟 开启事务：要么全删成功，要么全不删
+    public void deleteArticleWithCascades(Long articleId) {
+        // 1. 抹除该文章下的所有评论
+        QueryWrapper<Comment> commentQuery = new QueryWrapper<>();
+        commentQuery.eq("article_id", articleId);
+        commentMapper.delete(commentQuery);
+
+        // 2. 抹除该文章的所有点赞记录
+        QueryWrapper<UserLikeRecord> likeQuery = new QueryWrapper<>();
+        likeQuery.eq("article_id", articleId);
+        userLikeRecordMapper.delete(likeQuery);
+
+        // 3. 最后，将文章本体从世界上抹除
+        this.removeById(articleId);
     }
 }

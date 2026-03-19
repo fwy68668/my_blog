@@ -18,4 +18,8 @@ public interface IArticleService extends IService<Article> {
 
     //新增：获取某个用户点赞过的所有文章 (用于个人主页)
     List<Article> getLikedArticlesByUserId(Long userId);
+
+    // 删除文章 (级联删除评论和点赞)
+    void deleteArticleWithCascades(Long articleId);
+
 }

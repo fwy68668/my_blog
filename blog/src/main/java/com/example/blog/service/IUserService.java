@@ -9,4 +9,7 @@ public interface IUserService extends IService<User> {
 
     // 注册新用户
     boolean register(User user);
+
+    // 删除用户 (级联删除用户下的所有文章和点赞记录)
+    void deleteUserWithCascades(Long userId);
 }

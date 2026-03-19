@@ -52,6 +52,11 @@ const routes = [
                 path: 'articles',
                 name: 'ManageArticles',
                 component: () => import('@/views/admin/ArticleManage.vue') // 稍后建
+            },{
+                path: '/admin/users',  // 👈 修复在这里：补上完整路径前缀和斜杠
+                name: 'UserManage',
+                component: () => import('@/views/admin/UserManage.vue'),
+                meta: { requiresAdmin: true } // 别忘了加权限校验哦
             },
             {
                 path: 'categories',

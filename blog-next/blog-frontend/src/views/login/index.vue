@@ -22,9 +22,21 @@
             <div class="input-group">
               <input v-model="loginForm.username" type="text" placeholder="用户名" />
             </div>
+
             <div class="input-group">
-              <input v-model="loginForm.password" type="password" placeholder="密码" @keyup.enter="handleLogin" />
+              <input
+                  v-model="loginForm.password"
+                  :type="pwdVisible.login ? 'text' : 'password'"
+                  placeholder="密码"
+                  @keyup.enter="handleLogin"
+                  class="pwd-input"
+              />
+              <span class="eye-icon" @click="togglePwd('login')">
+                <svg v-if="pwdVisible.login" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg v-else viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </span>
             </div>
+
             <button class="primary-btn" @click="handleLogin" :disabled="loading">
               {{ loading ? '验证中...' : '进入控制台' }}
             </button>
@@ -64,11 +76,15 @@
             <div class="input-group">
               <input
                   v-model="registerForm.password"
-                  type="password"
+                  :type="pwdVisible.register ? 'text' : 'password'"
                   placeholder="设置密码 (最少8位，含英文和数字)"
                   @blur="validatePassword"
-                  :class="getInputClass('password')"
+                  :class="[getInputClass('password'), 'pwd-input']"
               />
+              <span class="eye-icon" @click="togglePwd('register')">
+                <svg v-if="pwdVisible.register" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg v-else viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </span>
               <span v-if="feedback.password.msg" :class="['feedback-text', feedback.password.type]">
                 {{ feedback.password.msg }}
               </span>
@@ -77,12 +93,16 @@
             <div class="input-group">
               <input
                   v-model="registerForm.confirmPassword"
-                  type="password"
+                  :type="pwdVisible.confirm ? 'text' : 'password'"
                   placeholder="请再次确认密码"
                   @blur="validateConfirm"
                   @keyup.enter="handleRegister"
-                  :class="getInputClass('confirmPassword')"
+                  :class="[getInputClass('confirmPassword'), 'pwd-input']"
               />
+              <span class="eye-icon" @click="togglePwd('confirm')">
+                <svg v-if="pwdVisible.confirm" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg v-else viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </span>
               <span v-if="feedback.confirmPassword.msg" :class="['feedback-text', feedback.confirmPassword.type]">
                 {{ feedback.confirmPassword.msg }}
               </span>
@@ -112,8 +132,19 @@ const loading = ref(false)
 const loginForm = reactive({ username: '', password: '' })
 const registerForm = reactive({ username: '', nickname: '', password: '', confirmPassword: '' })
 
+// ================= 小眼睛开关状态 =================
+// 独立控制登录、注册、确认密码三个框的可视状态
+const pwdVisible = reactive({
+  login: false,
+  register: false,
+  confirm: false
+})
+
+const togglePwd = (field) => {
+  pwdVisible[field] = !pwdVisible[field]
+}
+
 // ================= 实时校验系统 =================
-// 存储每个字段的反馈信息 type: 'error' | 'success', msg: 提示文字
 const feedback = reactive({
   username: { type: '', msg: '' },
   nickname: { type: '', msg: '' },
@@ -121,7 +152,6 @@ const feedback = reactive({
   confirmPassword: { type: '', msg: '' }
 })
 
-// 动态获取输入框的红/蓝边框样式
 const getInputClass = (field) => {
   if (feedback[field].type === 'error') return 'input-error'
   if (feedback[field].type === 'success') return 'input-success'
@@ -149,7 +179,6 @@ const validatePassword = () => {
   else if (!pwdRegex.test(val)) feedback.password = { type: 'error', msg: '必须同时包含英文和数字' }
   else feedback.password = { type: 'success', msg: '✓ 密码强度合格' }
 
-  // 如果确认密码框已经填了，修改密码时联动重新校验一次
   if (registerForm.confirmPassword) validateConfirm()
 }
 
@@ -159,7 +188,6 @@ const validateConfirm = () => {
   else if (val !== registerForm.password) feedback.confirmPassword = { type: 'error', msg: '两次密码不一致' }
   else feedback.confirmPassword = { type: 'success', msg: '✓ 密码一致' }
 }
-
 
 // ================= 接口提交逻辑 =================
 const handleLogin = async () => {
@@ -177,17 +205,13 @@ const handleLogin = async () => {
 }
 
 const handleRegister = async () => {
-  // 提交前，强行触发一遍所有校验（防止用户什么都不填直接点注册）
   validateUsername()
   validateNickname()
   validatePassword()
   validateConfirm()
 
-  // 检查是否有 error 类型的反馈
   const hasError = Object.values(feedback).some(f => f.type === 'error')
-  if (hasError) {
-    return ElMessage.warning('请先修正标红的错误项哦！')
-  }
+  if (hasError) return ElMessage.warning('请先修正标红的错误项哦！')
 
   try {
     loading.value = true
@@ -199,9 +223,11 @@ const handleRegister = async () => {
 
     ElMessage.success('🎉 注册成功，赶快登录体验吧！')
 
-    // 清空表单与校验状态
+    // 清空表单、校验状态和眼睛状态
     Object.keys(registerForm).forEach(k => registerForm[k] = '')
     Object.keys(feedback).forEach(k => feedback[k] = { type: '', msg: '' })
+    pwdVisible.register = false
+    pwdVisible.confirm = false
     isLogin.value = true
 
   } catch (error) {
@@ -212,7 +238,6 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
-/* 基础样式保持不变 */
 .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #fafafa; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 .glass-box { display: flex; width: 850px; height: 500px; background: #fff; border-radius: 20px; box-shadow: 0 20px 60px -15px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid rgba(0,0,0,0.04); }
 .brand-section { flex: 1; background: #111; color: white; padding: 40px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -226,54 +251,38 @@ const handleRegister = async () => {
 .form-header h3.active { color: #111; }
 .divider { margin: 0 15px; font-weight: 300; }
 
-/* ================= 增强的输入框与反馈样式 ================= */
-.input-group {
-  margin-bottom: 22px; /* 加大间距给提示文字留出空间 */
-  position: relative;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 14px 18px;
-  border: 1px solid #eaeaea;
-  background: #fafafa;
-  border-radius: 10px;
-  font-size: 14px;
-  color: #333;
-  outline: none;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-}
-
-/* 默认聚焦变黑 */
+.input-group { margin-bottom: 22px; position: relative; }
+.input-group input { width: 100%; padding: 14px 18px; border: 1px solid #eaeaea; background: #fafafa; border-radius: 10px; font-size: 14px; color: #333; outline: none; transition: all 0.2s ease; box-sizing: border-box; }
 .input-group input:focus { border-color: #111; background: #fff; }
-
-/* 失焦报错态 (极简红) */
 .input-group input.input-error { border-color: #e00; background: #fffafa; }
 .input-group input.input-error:focus { border-color: #e00; box-shadow: 0 0 0 1px #e00 inset; }
-
-/* 失焦正确态 (Vercel 蓝) */
 .input-group input.input-success { border-color: #0070f3; background: #fff; }
 .input-group input.input-success:focus { border-color: #0070f3; box-shadow: 0 0 0 1px #0070f3 inset; }
 
-/* 提示文字绝对定位，防止撑开布局导致页面抖动 */
-.feedback-text {
-  position: absolute;
-  bottom: -18px;
-  left: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  animation: fadeIn 0.2s ease;
+/* 🌟 小眼睛与密码框联动样式 */
+.input-group input.pwd-input {
+  padding-right: 45px; /* 给右侧的小眼睛留出空间，防止输入的密码文字压到图标上 */
 }
+.eye-icon {
+  position: absolute;
+  right: 15px;
+  top: 14px;
+  color: #a0a0a0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+.eye-icon:hover {
+  color: #111; /* 鼠标悬停时图标变黑，反馈更清晰 */
+}
+
+.feedback-text { position: absolute; bottom: -18px; left: 4px; font-size: 12px; font-weight: 500; animation: fadeIn 0.2s ease; }
 .feedback-text.error { color: #e00; }
 .feedback-text.success { color: #0070f3; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: translateY(0); } }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-2px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* 按钮与其它 */
 .primary-btn { width: 100%; padding: 14px; border: none; background: #111; color: #fff; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.2s; }
 .primary-btn:hover { background: #333; }
 .primary-btn.outline { background: transparent; color: #111; border: 1px solid #111; }
