@@ -1,7 +1,7 @@
 <template>
   <div class="detail-container">
     <header class="detail-nav">
-      <el-button plain @click="router.push('/')" class="back-btn">🔙 返回星海</el-button>
+      <el-button plain @click="router.push('/')" class="back-btn">🔙 返回博客主页</el-button>
       <div class="theme-toggle" @click="toggleTheme">
         {{ isDark ? '🌙 暗夜' : '☀️ 破晓' }}
       </div>

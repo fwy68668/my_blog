@@ -1,7 +1,7 @@
 <template>
   <div class="profile-container">
     <header class="detail-nav">
-      <el-button plain @click="$router.back()">🔙 返回</el-button>
+      <el-button plain @click="$router.back()">🔙 返回博客主页</el-button>
       <div class="nav-title">TA 的主页</div>
     </header>
 

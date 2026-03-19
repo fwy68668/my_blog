@@ -7,14 +7,16 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
+
 aliyun:
   oss:
-    endpoint: oss-cn-xxx.aliyuncs.com
-    access-key-id: your_access_key_id
-    access-key-secret: your_access_key_secret
-    bucket-name: your_bucket_name
-
+    endpoint: oss-cn-beijing.aliyuncs.com
+    bucket-name: javaweb-student-fwy
+    # 👇 直接在这里读取环境变量即可，注意保持缩进
+    accessKeyId: ${ALIYUN_OSS_ACCESSKEYID}
+    accessKeySecret: ${ALIYUN_OSS_ACCESSKEYSECRET}

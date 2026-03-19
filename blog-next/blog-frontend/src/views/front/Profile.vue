@@ -1,7 +1,7 @@
 <template>
   <div class="profile-container">
     <header class="detail-nav">
-      <el-button plain @click="router.push('/')">🔙 返回星海</el-button>
+      <el-button plain @click="router.push('/')">🔙 返回博客主页</el-button>
       <div class="nav-title">个人空间</div>
     </header>
 
